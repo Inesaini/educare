@@ -53,6 +53,49 @@ All patients are fictional. `npm run seed` in `backend/` recreates the database 
 |---|---|---|
 | ![Appointments](docs/appointments.png) | ![Prescription](docs/prescription.png) | ![Medical record](docs/medical-record.png) |
 
+## How it works
+
+```mermaid
+flowchart LR
+    W["React web app<br/>doctor · director · admin"] -- "REST + JWT" --> AUTH
+    M["Mobile app<br/>patients"] -- "REST + JWT" --> AUTH
+    subgraph API["Express API"]
+        AUTH["Auth middleware<br/>role and ownership checks"] --> R["Routes<br/>patients · medecins · admin<br/>directeur · stats · notifications"]
+        R --> S["Services<br/>accounts · Excel import<br/>emails · appointment slots"]
+    end
+    R --> DB[("SQLite<br/>node:sqlite")]
+    S --> DB
+    S --> MAIL["SMTP server<br/>or API console"]
+```
+
+Both clients talk to the same REST API. Every request carries a JWT; the auth middleware
+checks the caller's role and, for patients, that the data belongs to them. Routes read and
+write the SQLite database directly, and the services handle the shared logic: account
+creation, Excel imports, emails and appointment slots.
+
+### Appointment requests
+
+```mermaid
+sequenceDiagram
+    participant P as Patient (mobile app)
+    participant API as EduCare API
+    participant D as Doctor (web app)
+    P->>API: request an appointment
+    API-->>D: request appears in the pending list
+    alt accepted
+        D->>API: set date and time
+        API->>P: notification "Rendez-vous accepté"
+    else refused
+        D->>API: refuse
+        API->>P: notification "Demande refusée"
+    end
+```
+
+A doctor can also schedule appointments directly, one at a time or in bulk from an Excel list
+of patients. Bulk scheduling starts from a chosen date and places the patients one after
+another at a fixed interval, skipping slots already taken and keeping to working hours (Sunday
+to Thursday, 8:00–12:00 and 14:00–16:00). Each patient gets a notification.
+
 ## Backend
 
 ```
@@ -73,14 +116,6 @@ backend/
   cannot be used to call the API.
 - Without SMTP settings, emails (activation and reset links) are printed in the API console.
 - `npm test` runs the API tests against a temporary database.
-
-## Frontend changes
-
-- Backend URL in one place (`frontend/src/api.js`, `VITE_API_URL`), login token added to every
-  API call.
-- Fixed pages that crashed or showed wrong data: new medical record page, consultation form,
-  doctors list, appointment cancel and add, admin dashboard route, import path that broke the
-  build on Linux, academic year in the statistics.
 
 ## Tech stack
 
