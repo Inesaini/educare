@@ -1,14 +1,19 @@
 # EduCare
 
-Web application for a school medical service (ESI Sidi Bel Abbès): doctors manage patient
-records, consultations, physical exams, prescriptions and appointments; the director follows
-statistics on consultations and diseases; the administrator manages accounts.
+**A full-stack web app for a school's medical service: patient records, consultations, prescriptions, appointments and statistics, with separate spaces for doctors, the director and administrators.**
 
 ![Director dashboard](docs/director-dashboard.png)
 
-The frontend comes from a team project (React). This repository adds a new backend that runs
-entirely locally (Express + SQLite) and is filled with demo data on first start, so the whole
-application can be tried without any external service.
+## Highlights
+
+- **Three roles, one API:** doctors, the director and administrators on the web, plus patients through a mobile app, all behind JWT authentication with role and ownership checks.
+- **REST API with 90 endpoints over 17 SQLite tables**, covered by API tests (`npm test`).
+- **Runs with no external service:** the database is created and filled with fictional demo data on first start, and emails print to the console when no SMTP server is set.
+- **Real workflows:** appointment requests and bulk scheduling around working hours, Excel imports, printable prescriptions, PDF statistics reports.
+
+The React frontend comes from a team project; this repository adds a new local backend (Express + SQLite) so the whole app can be tried in two commands.
+
+**Stack:** React 19 · Vite · Tailwind CSS · Recharts · Node.js · Express 5 · SQLite · JWT · bcrypt · ExcelJS
 
 ## Run it
 
