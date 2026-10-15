@@ -121,8 +121,3 @@ backend/
   cannot be used to call the API.
 - Without SMTP settings, emails (activation and reset links) are printed in the API console.
 - `npm test` runs the API tests against a temporary database.
-
-## Tech stack
-
-React 19, Vite, Tailwind CSS, Recharts, FullCalendar, jsPDF · Node.js, Express 5, SQLite
-(`node:sqlite`), JSON Web Tokens, bcrypt, ExcelJS.
